@@ -3,14 +3,21 @@ import {View, FlatList, ActivityIndicator, StyleSheet} from 'react-native'; // P
 import Http from '../../libs/http';
 import CoinsItem from './CoinsItem';
 import Colors from './../../res/colors';
+import CoinsSearch from './CoinsSearch';
 
 class CoinsScreen extends Component {
   state = {
     coins: [],
+    allCoins: [],
     loading: false,
   };
 
-  componentDidMount = async () => {
+  componentDidMount = () => {
+    // realizamos la llamada inicial
+    this.getCoins();
+  };
+
+  getCoins = async () => {
     // Iniciamos el loadin en true
     this.setState({loading: true});
     // Utilizando la instancia Http
@@ -19,7 +26,11 @@ class CoinsScreen extends Component {
     );
 
     // Seteamos al estado la respuesta
-    this.setState({coins: response.data, loading: false});
+    this.setState({
+      coins: response.data,
+      allCoins: response.data,
+      loading: false,
+    });
   };
 
   handlePress = coin => {
@@ -27,10 +38,26 @@ class CoinsScreen extends Component {
     this.props.navigation.navigate('CoinDetail', {coin});
   };
 
+  //Metodo para realizar una busqueda
+  handleSearch = query => {
+    const {allCoins} = this.state;
+
+    const coinsFiltered = allCoins.filter(coin => {
+      return (
+        coin.name.toLowerCase().includes(query.toLowerCase()) ||
+        coin.symbol.toLowerCase().includes(query.toLowerCase())
+      );
+    });
+
+    this.setState({coins: coinsFiltered});
+  };
+
   render() {
     const {coins, loading} = this.state;
     return (
       <View style={styles.container}>
+        <CoinsSearch onChange={this.handleSearch} />
+
         {loading ? (
           <ActivityIndicator
             style={styles.loader}
