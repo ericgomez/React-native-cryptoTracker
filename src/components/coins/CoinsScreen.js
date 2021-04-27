@@ -1,7 +1,18 @@
 import React, {Component} from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native'; // Pressable- Evento tipo boton
+import Http from '../../libs/http';
 
 class CoinsScreen extends Component {
+  componentDidMount = async () => {
+    // Utilizando la instancia Http
+    const coins = await Http.instance.get(
+      'https://api.coinlore.net/api/tickers/',
+    );
+
+    // Verificamos que nos muestra informacion
+    console.log('Coins', coins);
+  };
+
   handlePress = () => {
     console.log('go to detail', this.props);
 
