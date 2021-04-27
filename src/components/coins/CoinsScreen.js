@@ -1,16 +1,20 @@
 import React, {Component} from 'react';
-import {View, Text, Pressable, StyleSheet} from 'react-native'; // Pressable- Evento tipo boton
+import {View, Text, FlatList, Pressable, StyleSheet} from 'react-native'; // Pressable- Evento tipo boton
 import Http from '../../libs/http';
 
 class CoinsScreen extends Component {
+  state = {
+    coins: [],
+  };
+
   componentDidMount = async () => {
     // Utilizando la instancia Http
-    const coins = await Http.instance.get(
+    const response = await Http.instance.get(
       'https://api.coinlore.net/api/tickers/',
     );
 
-    // Verificamos que nos muestra informacion
-    console.log('Coins', coins);
+    // Seteamos al estado la respuesta
+    this.setState({coins: response.data});
   };
 
   handlePress = () => {
@@ -21,12 +25,18 @@ class CoinsScreen extends Component {
   };
 
   render() {
+    const {coins} = this.state;
     return (
       <View style={styles.container}>
-        <Text style={styles.titleText}>Coins Screen</Text>
-        <Pressable style={styles.btn} onPress={this.handlePress}>
-          <Text style={styles.btnText}>Ir a detail</Text>
-        </Pressable>
+        <FlatList
+          data={coins}
+          renderItem={({item}) => (
+            <View>
+              <Text>{item.name}</Text>
+              <Text>{item.symbol}</Text>
+            </View>
+          )}
+        />
       </View>
     );
   }
