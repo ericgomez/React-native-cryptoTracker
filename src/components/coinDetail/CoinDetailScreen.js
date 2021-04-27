@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Colors from '../../res/colors';
 import Http from '../../libs/http';
+import Storage from './../../libs/storage';
 import CoinMarketItem from './CoinMarketItem';
 
 class CoinDetailScreen extends Component {
@@ -18,6 +19,27 @@ class CoinDetailScreen extends Component {
     markets: [],
     isFavorite: false,
   };
+
+  toggleFavorite = () => {
+    if (this.state.isFavorite) {
+      this.removeFavorite();
+    } else {
+      this.addFavorite();
+    }
+  };
+
+  addFavorite = () => {
+    const coin = JSON.stringify(this.state.coin);
+    const key = `favorite-${this.state.coin.id}`;
+
+    const stored = Storage.instance.store(key, coin);
+
+    if (stored) {
+      this.setState({isFavorite: true});
+    }
+  };
+
+  removeFavorite = () => {};
 
   //Metodo para obtener una imagen desde la API
   getSymbolIcon = coinNameId => {
@@ -83,6 +105,7 @@ class CoinDetailScreen extends Component {
           </View>
 
           <Pressable
+            onPress={this.toggleFavorite}
             style={[
               // Arreglo de estylos
               styles.btnFavorite,

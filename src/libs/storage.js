@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Storage {
   // Creamos una sola instancia
-  static instance = Storage();
+  static instance = new Storage();
 
   //Metodo generico store, unicamente almacena String, los demas datos los tenemos que convertir a Strings
   store = async (key, value) => {
